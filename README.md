@@ -50,7 +50,7 @@ Transferring data from Juno to local host and vice versa:
 
 ```
 $ ./hsmCopy.sh user@login1.juno.cmcc.scc:/path/to/file .
-$ ./hsmCopy.sh :/path/to/file user@login1.juno.cmcc.scc:/path/to/destination
+$ ./hsmCopy.sh /path/to/file user@login1.juno.cmcc.scc:/path/to/destination
 ```
 
 The same for `cassandra`, just replace the word `juno`.
