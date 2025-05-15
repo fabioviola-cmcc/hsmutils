@@ -28,7 +28,7 @@ set configFile [file join $env(HOME) ".hsmconfig"]
 set configVars [read_config $configFile]
 
 # === Controlla se le chiavi esistono ===
-foreach key {username password otppath} {
+foreach key {username password secret} {
     if {![dict exists $configVars $key]} {
         puts "Errore: la chiave \"$key\" manca nel file di configurazione."
         exit 1
@@ -37,8 +37,8 @@ foreach key {username password otppath} {
 
 # === Estrai variabili dal config ===
 set username [dict get $configVars username]
-set filePath [dict get $configVars password]
-set jotpPath [dict get $configVars otppath]
+set password [dict get $configVars password]
+set secret [dict get $configVars secret]
 
 # === Argomenti da linea di comando ===
 set server "juno"
@@ -69,27 +69,7 @@ if { $loginNode == "" } {
     exit 1
 }
 
-# === Leggi la password dal file ===
-if {![file exists $filePath]} {
-    puts "Errore: file password non trovato: $filePath"
-    exit 1
-}
-set fileHandle [open $filePath r]
-set password [gets $fileHandle]
-close $fileHandle
-
-# === Ottieni OTP ===
-if {![file exists $jotpPath]} {
-    puts "Errore: script OTP non trovato: $jotpPath"
-    exit 1
-}
-
-set secretFile "/home/val/.ssh/juno_secret"
-if {![file exists $secretFile]} {
-    puts "Errore: file secret OTP non trovato: $secretFile"
-    exit 1
-}
-set otp [exec oathtool --totp=sha1 -b [exec cat $secretFile]]
+set otp [exec oathtool --totp=sha1 -b $secret]
 
 # === Connessione SSH ===
 spawn ssh -Y $username@$fullHost
