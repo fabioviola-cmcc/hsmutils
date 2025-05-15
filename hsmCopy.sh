@@ -1,6 +1,11 @@
 #!/usr/bin/expect -f
 
-# === Funzione: Legge file di configurazione ===
+##############################################
+#
+# Read configuration file
+#
+##############################################
+
 proc read_config {filepath} {
     set configDict {}
     if {[file exists $filepath]} {
@@ -21,11 +26,9 @@ proc read_config {filepath} {
     return $configDict
 }
 
-# === Leggi file di configurazione ===
 set configFile [file join $env(HOME) ".hsmconfig"]
 set configVars [read_config $configFile]
 
-# === Controlla se le chiavi esistono ===
 foreach key {username password secret} {
     if {![dict exists $configVars $key]} {
         puts "Errore: la chiave \"$key\" manca nel file di configurazione."
@@ -33,15 +36,19 @@ foreach key {username password secret} {
     }
 }
 
-# === Estrai variabili dal config ===
 set username [dict get $configVars username]
 set password [dict get $configVars password]
 set secret [dict get $configVars secret]
 
-# === OTP ===
 set otp [exec oathtool --totp=sha1 -b $secret]
 
-# === Argomenti ===
+
+##############################################
+#
+# Read command line arguments
+#
+##############################################
+
 if { $argc < 2 } {
     puts "Uso: ./script.expect <origine> <destinazione> [loginNode] [server]"
     exit 1
@@ -50,10 +57,14 @@ if { $argc < 2 } {
 set source [lindex $argv 0]
 set destination [lindex $argv 1]
 
-# === Costruisci comando SCP ===
+##############################################
+#
+# Build and run command
+#
+##############################################
+
 set scpCommand "scp -r $source $destination"
 
-# === Avvia SCP ===
 spawn {*}$scpCommand
 
 expect {

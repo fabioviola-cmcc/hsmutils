@@ -1,6 +1,11 @@
 #!/usr/bin/expect -f
 
-# === Funzione: Legge file di configurazione ===
+##############################################
+#
+# Read configuration file
+#
+##############################################
+
 proc read_config {filepath} {
     set configDict {}
     if {[file exists $filepath]} {
@@ -23,11 +28,9 @@ proc read_config {filepath} {
     return $configDict
 }
 
-# === Leggi file di configurazione ===
 set configFile [file join $env(HOME) ".hsmconfig"]
 set configVars [read_config $configFile]
 
-# === Controlla se le chiavi esistono ===
 foreach key {username password secret} {
     if {![dict exists $configVars $key]} {
         puts "Errore: la chiave \"$key\" manca nel file di configurazione."
@@ -35,12 +38,17 @@ foreach key {username password secret} {
     }
 }
 
-# === Estrai variabili dal config ===
 set username [dict get $configVars username]
 set password [dict get $configVars password]
 set secret [dict get $configVars secret]
 
-# === Argomenti da linea di comando ===
+
+##############################################
+#
+# Read command line arguments
+#
+##############################################
+
 set server "juno"
 set loginNode ""
 
@@ -51,13 +59,18 @@ if { $argc >= 2 } {
     set loginNode [lindex $argv 1]
 }
 
-# === Verifica server valido ===
+
+##############################################
+#
+# Build server url
+#
+##############################################
+
 if {![regexp {^(juno|cassandra)$} $server]} {
     puts "Errore: il server deve essere 'juno' o 'cassandra'."
     exit 1
 }
 
-# === Costruisci host ===
 if { $loginNode == "" } {
     set fullHost "login.$server.cmcc.scc"
 } elseif { $loginNode == "1" } {
@@ -71,7 +84,13 @@ if { $loginNode == "" } {
 
 set otp [exec oathtool --totp=sha1 -b $secret]
 
-# === Connessione SSH ===
+
+##############################################
+#
+# Connect
+#
+##############################################
+
 spawn ssh -Y $username@$fullHost
 expect "First Factor: "
 send "$password\r"
