@@ -83,7 +83,13 @@ if {![file exists $jotpPath]} {
     puts "Errore: script OTP non trovato: $jotpPath"
     exit 1
 }
-set otp [exec sh $jotpPath]
+
+set secretFile "/home/val/.ssh/juno_secret"
+if {![file exists $secretFile]} {
+    puts "Errore: file secret OTP non trovato: $secretFile"
+    exit 1
+}
+set otp [exec oathtool --totp=sha1 -b [exec cat $secretFile]]
 
 # === Connessione SSH ===
 spawn ssh -Y $username@$fullHost
