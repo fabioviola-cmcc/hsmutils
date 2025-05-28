@@ -72,7 +72,8 @@ if {![regexp {^(juno|cassandra)$} $server]} {
 }
 
 if { $loginNode == "" } {
-    set fullHost "login.$server.cmcc.scc"
+    set r [expr {int(rand() * 2)}]
+    set fullHost "login1.$server.cmcc.scc"
 } elseif { $loginNode == "1" } {
     set fullHost "login1.$server.cmcc.scc"
 } elseif { $loginNode == "2" } {

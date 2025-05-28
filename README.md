@@ -30,8 +30,7 @@ $ ./hsmConnect.sh juno
 
 You can force using login node 1 or 2 by simply adding 1 or 2 at the
 end of the line. By not specifying it, the destination login node will
-be automatically selected by HSM according to load balancing
-techniques.
+be the login1.
 
 To connect to Cassandra, follow the same procedure, but replace `juno`
 with `cassandra`.
